@@ -1,0 +1,19 @@
+{
+    "name": "node-editor",
+    "version": "1.0.0",
+    "description": "",
+    "main": "src/index",
+    "scripts": {
+        "start": "parcel index.html --open",
+        "build": "parcel build index.html"
+    },
+    "dependencies": {
+        "@types/d3": "5.16.3",
+        "d3": "6.2.0",
+        "typescript": "latest"
+    },
+    "devDependencies": {
+        "parcel-bundler": "^1.6.1"
+    },
+    "keywords": []
+}
