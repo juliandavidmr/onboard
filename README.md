@@ -11,9 +11,15 @@ Node editor with inputs and outputs based on [d3.js](https://d3js.org/).
 
 ## TODO
 
-- [ ] Events.
 - [ ] Export/Import JSON.
+- [x] Events.
 - [x] Node Connector.
+- [ ] Ext: Autopositioning.
+- [ ] Ext: minimap.
+- [ ] Pin protection.
+- [ ] Control: Input
+- [ ] Control: Label.
+- [ ] Demo website.
 
 ## Example
 

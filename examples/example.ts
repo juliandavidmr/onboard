@@ -18,6 +18,7 @@ const editor = new Editor({
 Node1.addInputPin(new Pin("out1", "Output 1"));
 
 Node2.addInputPin(new Pin("in1", "Input 1"));
+Node2.addInputPin(new Pin("in2", "Input 2"));
 Node2.addOutputPin(new Pin("out1", "Output 1"));
 
 Node3.addInputPin(new Pin("in1", "Input 1"));

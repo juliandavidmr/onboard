@@ -15,13 +15,16 @@ export class Events<E = string> {
      * @param eventName 
      * @param callback 
      */
-    emit<D = any>(eventName: E, data?: D): boolean {
+    emit<D = any>(eventName: E, data?: D, cb?: Function): boolean {
         const toEmit = this.observers.filter(o => o.eventName === eventName);
         if (toEmit.length) {
             let success = true;
             toEmit.map(observer => {
                 try {
-                    observer.callback.call(null, data);
+                    const r = observer.callback.call(null, data);
+                    if (typeof cb === "function") {
+                        cb.call(null, r);
+                    }
                 } catch (error) {
                     success = false;
                 }
