@@ -1,7 +1,7 @@
-import { CommonSelection } from "..";
-import { NodeComponent } from "../node/node";
-import { Pin } from "../pin/pin";
-import { ExtensionParams } from "./base";
+import { CommonSelection } from "../..";
+import { NodeComponent } from "../../node/node";
+import { Pin } from "../../pin/pin";
+import { ExtensionParams } from "../base";
 
 export function install(args: ExtensionParams) {
     const { eventManager, d3, root } = args;

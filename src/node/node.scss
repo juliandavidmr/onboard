@@ -1,13 +1,16 @@
 .node-component {
     position: absolute;
-    border: 1px solid gray;
-    border-radius: 6px;
+    border: 1px solid #c7c7c7;
+    border-radius: 4px;
     background-color: white;
-    cursor: pointer;
+    outline: 0;
+    font-weight: 500;
+    letter-spacing: 0.3px;
+    box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.20);
 
     .node-header {
         padding: 5px 10px;
-        border-bottom: 1px solid gray;
+        border-bottom: 1px solid #c7c7c7;
         font-weight: 600;
         width: inherit;
     }
@@ -15,5 +18,19 @@
     .node-content {
         display: flex;
         justify-content: space-between;
+    }
+
+    &--drag {
+        &-start {
+            cursor: grab;
+            box-shadow: 0px 2px 11px rgb(153, 153, 153);
+            z-index: 1000;
+        }
+
+        &-dragging {
+            box-shadow: 0px 2px 11px rgb(153, 153, 153);
+            cursor: grabbing;
+            z-index: 1000;
+        }
     }
 }

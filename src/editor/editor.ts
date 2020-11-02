@@ -1,3 +1,4 @@
+import "./editor.scss";
 import { NodeComponent, NodeEvents } from "../node/node";
 import { Events } from "../events/events";
 import { PinEvents } from "../pin/pin";
@@ -15,18 +16,28 @@ export interface SchemaArgs {
 export type GlobalEvents = PinEvents | NodeEvents;
 
 export class Editor {
+    static staticId = 1;
     private readonly eventManager = new Events<GlobalEvents>();
+    id: string;
 
     constructor(private readonly config: SchemaArgs) {
         if (config.nodes && config.nodes.length === 0) {
             console.error(`Config not provided nodes`);
         }
 
+        this.id = `editor-${config.name ? config.name.trim() + '-' : ''}${Editor.staticId++}`;
+
+        d3.select(config.root)
+            .append('div')
+            .attr('id', this.id)
+            .classed('editor', true)
+            .exit()
+
         config.nodes.map((node) => this.addNode(node));
     }
 
     addNode(node: NodeComponent) {
-        node.assoc(this.config.root);
+        node.assoc(`#` + this.id);
         node.eventManager = this.eventManager;
     }
 
@@ -36,11 +47,12 @@ export class Editor {
     installExtension(extension: (args: ExtensionParams) => void) {
         if (extension && typeof extension === 'function') {
             extension({
-                root: this.config.root,
+                root: '#' + this.id,
                 eventManager: this.eventManager,
                 d3: d3,
                 width: this.config.width,
-                height: this.config.height
+                height: this.config.height,
+                editor: this
             })
         }
     }

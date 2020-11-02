@@ -75,9 +75,9 @@ export class NodeComponent {
                 const current = d3.select(this);
                 deltaX = Math.abs(Number(current.attr("data-x") || "0") - event.x);
                 deltaY = Math.abs(Number(current.attr("data-y") || "0") - event.y);
-                current.style("box-shadow", "0px 2px 11px rgb(153, 153, 153)");
-                current.style("z-index", 1000);
-                current.style("cursor", "grab")
+
+                current.classed("node-component--drag-start", true)
+
                 self.eventManager?.emit('node:drag:start', {
                     x: deltaX,
                     y: deltaY,
@@ -88,14 +88,17 @@ export class NodeComponent {
             .on("drag", function (event: any) {
                 const x = event.x - deltaX;
                 const y = event.y - deltaY;
-
+                
                 const current = d3.select(this);
+
+                current.classed("node-component--drag-start", false);
+                current.classed("node-component--drag-dragging", true);
+
                 current
                     .style("transform", `translate(${x}px, ${y}px)`)
                     .attr("data-x", x)
                     .attr("data-y", y);
 
-                current.style("cursor", "grabbing")
                 self.eventManager?.emit('node:drag:dragging', {
                     x,
                     y,
@@ -105,9 +108,9 @@ export class NodeComponent {
             })
             .on("end", function (event: any) {
                 const current = d3.select(this);
-                current.style("box-shadow", null);
-                current.style("z-index", zIndex);
-                current.style("cursor", "grab")
+
+                current.classed("node-component--drag-dragging", false);
+
                 self.eventManager?.emit('node:drag:end', {
                     node: self,
                     target: this

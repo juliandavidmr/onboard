@@ -1,24 +1,31 @@
+![](./demo.png)
+
 # d3-node-editor
 
-Node editor with inputs and outputs based on [d3.js](https://d3js.org/).
+d3-node-editor is an extensible framework for visual programming. d3-node-editor allows you to create a node editor from the browser. You can define nodes and events that allow you to create instructions to process data in your editor.
 
-![](./demo.png)
+d3-node-editor is based on [d3.js](https://d3js.org/).
 
 ## How it works?
 
 - [x] No canvas.
 - [x] Based on [d3.js](https://d3js.org/).
 
+## Extensions
+
+- [x] Connectors.
+- [ ] Autopositioning.
+- [ ] minimap.
+
 ## TODO
 
 - [ ] Export/Import JSON.
 - [x] Events.
 - [x] Node Connector.
-- [ ] Ext: Autopositioning.
-- [ ] Ext: minimap.
 - [ ] Pin protection.
 - [ ] Control: Input
 - [ ] Control: Label.
+- [ ] Avoid cyclic connections.
 - [ ] Demo website.
 
 ## Example

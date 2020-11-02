@@ -1,5 +1,5 @@
 import { Editor, NodeComponent, Pin } from "../";
-import * as Connector from "../src/extensions/connectors.ext";
+import * as Connector from "../src/extensions/connectors";
 
 const root = "#root";
 
