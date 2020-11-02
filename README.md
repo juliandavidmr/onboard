@@ -1,10 +1,10 @@
 ![](./demo.png)
 
-# d3-node-editor
+# **Onboard**
 
-d3-node-editor is an extensible framework for visual programming. d3-node-editor allows you to create a node editor from the browser. You can define nodes and events that allow you to create instructions to process data in your editor.
+Onboard is an extensible framework for visual programming. Onboard allows you to create a node editor from the browser. You can define nodes and events that allow you to create instructions to process data in your editor.
 
-d3-node-editor is based on [d3.js](https://d3js.org/).
+Onboard is based on [d3.js](https://d3js.org/).
 
 ## How it works?
 
@@ -31,8 +31,8 @@ d3-node-editor is based on [d3.js](https://d3js.org/).
 ## Example
 
 ```ts
-import { Editor, NodeComponent, Pin } from "./d3-node-editor";
-import * as Connector from "./d3-node-editor/extensions/connectors.ext";
+import { Editor, NodeComponent, Pin } from "./Onboard";
+import * as Connector from "./Onboard/extensions/connectors.ext";
 
 const root = "#root";
 
@@ -43,22 +43,21 @@ const Node3 = new NodeComponent({ title: "Node3" });
 const editor = new Editor({
     name: "schema1",
     root,
-    nodes: [Node1, Node2, Node3],
-    width: 700,
-    height: 800
+    nodes: [Node1, Node2, Node3]
 });
 
-Node1.addInputPin(new Pin("out1", "Output 1"));
+Node1.addInput(new Pin("out1", "Output 1"));
 
-Node2.addInputPin(new Pin("in1", "Input 1"));
-Node2.addOutputPin(new Pin("out1", "Output 1"));
+Node2.addInput(new Pin("in1", "Input 1"));
+Node2.addInput(new Pin("in2", "Input 2"));
+Node2.addOutput(new Pin("out1", "Output 1"));
 
-Node3.addInputPin(new Pin("in1", "Input 1"));
-Node3.addOutputPin(new Pin("out1", "Output 1"));
-Node3.addOutputPin(new Pin("out2", "Output 2"));
-Node3.addOutputPin(new Pin("out3", "Output 3"));
+Node3.addInput(new Pin("in1", "Input 1"));
+Node3.addOutput(new Pin("out1", "Output 1"));
+Node3.addOutput(new Pin("out2", "Output 2"));
+Node3.addOutput(new Pin("out3", "Output 3"));
 
-editor.installExtension(Connector.install);
+editor.install(Connector);
 ```
 
 ## Development

@@ -9,8 +9,8 @@ export interface SchemaArgs {
     name: string;
     root: string;
     nodes: NodeComponent[];
-    width: number;
-    height: number;
+    width?: number;
+    height?: number;
 }
 
 export type GlobalEvents = PinEvents | NodeEvents;
@@ -44,16 +44,16 @@ export class Editor {
     on = this.eventManager.on.bind(this.eventManager);
     emit = this.eventManager.emit.bind(this.eventManager);
 
-    installExtension(extension: (args: ExtensionParams) => void) {
-        if (extension && typeof extension === 'function') {
-            extension({
+    install(extension: { install: (args: ExtensionParams) => void }) {
+        if (extension && typeof extension.install === 'function') {
+            extension.install({
                 root: '#' + this.id,
                 eventManager: this.eventManager,
                 d3: d3,
-                width: this.config.width,
-                height: this.config.height,
                 editor: this
             })
+        } else {
+            console.error(`Cannot install extension.`, extension);
         }
     }
 }

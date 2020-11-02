@@ -7,8 +7,8 @@ export function install(args: ExtensionParams) {
     const { eventManager, d3, root } = args;
 
     const containerLines = d3.select(root).append('svg')
-        .attr("width", args.width)
-        .attr("height", args.height)
+        .style("width", '100%')
+        .style("height", '100%')
 
     let svgLine: d3.Selection<SVGPathElement, unknown, HTMLElement, any>;
     let pinSource: Pin;
@@ -84,27 +84,26 @@ export function install(args: ExtensionParams) {
             });
         })
     })
-}
 
-function getCentedRectangle(el: HTMLElement) {
-    var rect = el.getBoundingClientRect();
+    function getCentedRectangle(el: HTMLElement) {
+        var rect = el.getBoundingClientRect();
 
-    const centerX = rect.x + (rect.width / 2)
-    const centerY = rect.y + (rect.height / 2)
-    return [centerX, centerY]
-}
+        const centerX = rect.x + (rect.width / 2)
+        const centerY = rect.y + (rect.height / 2)
+        return [centerX, centerY]
+    }
 
+    function defaultPath(points: number[], curvature: number) {
+        const [x1, y1, x2, y2] = points;
+        const hx1 = x1 + Math.abs(x2 - x1) * curvature;
+        const hx2 = x2 - Math.abs(x2 - x1) * curvature;
 
-export function defaultPath(points: number[], curvature: number) {
-    const [x1, y1, x2, y2] = points;
-    const hx1 = x1 + Math.abs(x2 - x1) * curvature;
-    const hx2 = x2 - Math.abs(x2 - x1) * curvature;
+        return `M ${x1} ${y1} C ${hx1} ${y1} ${hx2} ${y2} ${x2} ${y2}`;
+    }
 
-    return `M ${x1} ${y1} C ${hx1} ${y1} ${hx2} ${y2} ${x2} ${y2}`;
-}
-
-function getPoints(d: string): number[] {
-    const m = d.match(/(([0-9]+)(\.[0-9])?)/g)
-    const r = m.map(Number) as number[]
-    return [r[0], r[1], r[6], r[7]]
+    function getPoints(d: string): number[] {
+        const m = d.match(/(([0-9]+)(\.[0-9])?)/g)
+        const r = m.map(Number) as number[]
+        return [r[0], r[1], r[6], r[7]]
+    }
 }

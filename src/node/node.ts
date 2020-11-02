@@ -61,15 +61,14 @@ export class NodeComponent {
             .append("div")
             .attr("class", "node-outputs");
 
-        this.installDrag()(this.referenceNode as any);
+        this.installDrag();
     }
 
     installDrag() {
         const self = this;
         let deltaX: number, deltaY: number;
-        let zIndex = 1;
 
-        return d3
+        const dragEvent = d3
             .drag()
             .on("start", function (event: any) {
                 const current = d3.select(this);
@@ -116,9 +115,11 @@ export class NodeComponent {
                     target: this
                 });
             });
+    
+        dragEvent(this.referenceNode as any)
     }
 
-    addInputPin(pin: Pin) {
+    addInput(pin: Pin) {
         this.inputs.push(pin);
         pin.assoc(this.referenceInputsNode);
         pin.node = this;
@@ -128,7 +129,7 @@ export class NodeComponent {
         );
     }
 
-    addOutputPin(pin: Pin) {
+    addOutput(pin: Pin) {
         this.outputs.push(pin);
         pin.assoc(this.referenceOutputsNode);
         pin.node = this;

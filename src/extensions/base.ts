@@ -6,7 +6,7 @@ export interface ExtensionParams {
     root: string,
     eventManager: Events<GlobalEvents>;
     d3: typeof d3;
-    width: number;
-    height: number;
+    width?: number;
+    height?: number;
     editor: Editor;
 }

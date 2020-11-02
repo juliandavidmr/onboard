@@ -7,6 +7,7 @@
     font-weight: 500;
     letter-spacing: 0.3px;
     box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.20);
+    transition: box-shadow 200ms ease-in-out;
 
     .node-header {
         padding: 5px 10px;
@@ -28,7 +29,7 @@
         }
 
         &-dragging {
-            box-shadow: 0px 2px 11px rgb(153, 153, 153);
+            box-shadow: 0px 2px 8px 0px rgb(153, 153, 153);
             cursor: grabbing;
             z-index: 1000;
         }
