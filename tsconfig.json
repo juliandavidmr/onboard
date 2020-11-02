@@ -15,6 +15,6 @@
     "useDefineForClassFields": true
   },
   "include": [
-    "src/*"
+    "src/*", "src/pin/pin.ts", "src/editor/editor.ts", "src/output/output.ts", "src/input/input.ts", "src/node/node.ts"
   ]
 }

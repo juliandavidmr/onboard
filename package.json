@@ -13,7 +13,8 @@
         "typescript": "latest"
     },
     "devDependencies": {
-        "parcel-bundler": "^1.6.1"
+        "parcel-bundler": "^1.6.1",
+        "sass": "^1.28.0"
     },
     "keywords": []
 }

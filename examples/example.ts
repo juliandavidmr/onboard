@@ -1,6 +1,5 @@
-import { Editor, NodeComponent } from "../";
-import { PinInput } from "../src/input";
-import { PinOutput } from "../src/output";
+import { Editor, NodeComponent, Pin } from "../";
+import * as Connector from "../src/extensions/connectors.ext";
 
 const root = "#root";
 
@@ -12,14 +11,18 @@ const editor = new Editor({
     name: "schema1",
     root,
     nodes: [Node1, Node2, Node3],
+    width: 700,
+    height: 800
 });
 
-Node1.addPin(new PinOutput("out1", "Output 1"));
+Node1.addInputPin(new Pin("out1", "Output 1"));
 
-Node2.addPin(new PinInput("in1", "Input 1"));
-Node2.addPin(new PinOutput("out1", "Output 1"));
+Node2.addInputPin(new Pin("in1", "Input 1"));
+Node2.addOutputPin(new Pin("out1", "Output 1"));
 
-Node3.addPin(new PinInput("in1", "Input 1"));
-Node3.addPin(new PinOutput("out1", "Output 1"));
-Node3.addPin(new PinOutput("out2", "Output 2"));
-Node3.addPin(new PinOutput("out3", "Output 3"));
+Node3.addInputPin(new Pin("in1", "Input 1"));
+Node3.addOutputPin(new Pin("out1", "Output 1"));
+Node3.addOutputPin(new Pin("out2", "Output 2"));
+Node3.addOutputPin(new Pin("out3", "Output 3"));
+
+editor.installExtension(Connector.install);

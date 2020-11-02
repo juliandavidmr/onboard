@@ -1,0 +1,19 @@
+.node-component {
+    position: absolute;
+    border: 1px solid gray;
+    border-radius: 6px;
+    background-color: white;
+    cursor: pointer;
+
+    .node-header {
+        padding: 5px 10px;
+        border-bottom: 1px solid gray;
+        font-weight: 600;
+        width: inherit;
+    }
+
+    .node-content {
+        display: flex;
+        justify-content: space-between;
+    }
+}
