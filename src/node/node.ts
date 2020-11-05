@@ -4,6 +4,7 @@ import { Events } from "../events/events";
 import { GlobalEvents } from "../editor/editor";
 import { Pin } from "../pin/pin";
 import { CommonSelection } from "..";
+import { generateUUID } from "../utils/uuid";
 
 interface NodeComponentArgs {
     title: string;
@@ -15,19 +16,23 @@ interface NodeComponentArgs {
 
 export type NodeEvents = 'node:drag:start' | 'node:drag:dragging' | 'node:drag:end';
 
-export class NodeComponent {
+export class NodeComponent<S = any> {
+    key = generateUUID();
     referenceNode: CommonSelection<HTMLDivElement>;
     referenceOutputsNode: CommonSelection<HTMLDivElement>;
     referenceInputsNode: CommonSelection<HTMLDivElement>;
     outputs: Pin[] = [];
     inputs: Pin[] = [];
     eventManager: Events<GlobalEvents> | undefined;
+    readonly nodeEventManager: Events<string> = new Events();
+    referenceRenderer: d3.Selection<HTMLDivElement, unknown, HTMLElement, any> | undefined;
+    private state: S = {} as S;
 
-    constructor(private readonly configNode: NodeComponentArgs) { }
+    constructor(private readonly configNode: NodeComponentArgs) {
+    }
 
     assoc(root: string) {
         const width = (this.configNode && this.configNode.width) || 180;
-        const height = (this.configNode && this.configNode.height) || 180;
 
         this.referenceNode = d3
             .select(root)
@@ -57,11 +62,23 @@ export class NodeComponent {
             .append("div")
             .attr("class", "node-inputs");
 
+        this.referenceRenderer = contentNode
+            .append('div')
+            .attr("class", "node-content-renderer");
+
         this.referenceOutputsNode = contentNode
             .append("div")
             .attr("class", "node-outputs");
 
         this.installDrag();
+    }
+
+    setState(newState: S) {
+        this.state = { ...newState };
+    }
+
+    getState() {
+        return this.state;
     }
 
     installDrag() {
@@ -138,4 +155,31 @@ export class NodeComponent {
             pin.getNode(),
         );
     }
+
+    render(renderer: (el: HTMLDivElement, node?: NodeComponent) => any) {
+        if (typeof renderer === 'function') {
+            const el = this.referenceRenderer!.node() as HTMLDivElement;
+            renderer.call(null, el, this);
+        } else {
+            console.warn('Render not contains a function arg');
+        }
+    }
+
+    broadcast(eventName: string, data: any) {
+        for (const output of this.outputs) {
+            for (const connection of output.connectedTo) {
+                connection.pin.node?.nodeEventManager?.emit(eventName, data);
+            }
+        }
+    }
+
+    on = this.nodeEventManager.on.bind(this.nodeEventManager);
+
+    destroy() {
+        this.referenceNode?.remove();
+    }
+
+    // Events
+
+    onDestroy() {}
 }

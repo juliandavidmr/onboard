@@ -29,7 +29,9 @@ export class Pin {
         const self = this;
 
         this.referencePin = inout!.append("div")
-            .attr("class", "node-input")
+            .attr('ref', this.ref)
+            .classed("node-input", true)
+            .classed("node-input-" + this.ref, true)
             .attr("title", this.text)
             .data([{
                 key: this.key,
@@ -73,5 +75,9 @@ export class Pin {
             this.connectedTo.push({ pin, extra })
             pin.connectTo(this, extra);
         }
+    }
+
+    remove() {
+
     }
 }
