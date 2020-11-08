@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "target": "es2020",
+    "target": "es5",
     "module": "esnext",
     "esModuleInterop": true,
     "sourceMap": true,
@@ -12,9 +12,14 @@
     "rootDir": "src",
     "moduleResolution": "node",
     "strict": true,
-    "useDefineForClassFields": true
+    "useDefineForClassFields": true,
+    "allowSyntheticDefaultImports": true,
+    /* List of folders to include type definitions from */
+    "typeRoots": [
+      "node_modules/@types"
+    ],
   },
   "include": [
-    "src/*", "src/pin/pin.ts", "src/editor/editor.ts", "src/output/output.ts", "src/input/input.ts", "src/node/node.ts"
+    "src/**/*"
   ]
 }

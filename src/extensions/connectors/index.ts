@@ -1,1 +1,1 @@
-export * from './connectors.ext'
+export * from './connectors.ext';
