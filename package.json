@@ -10,7 +10,8 @@
         "build": "parcel build index.html --no-source-maps",
         "clean": "rimraf ./dist",
         "lint": "run-s lint:code",
-        "lint:code": "eslint --ext ts,tsx src"
+        "lint:code": "eslint --ext ts,tsx src",
+        "tsc": "tsc"
     },
     "dependencies": {
         "d3": "6.2.0"

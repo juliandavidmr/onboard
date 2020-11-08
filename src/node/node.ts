@@ -7,180 +7,194 @@ import { CommonSelection } from '..';
 import { generateUUID } from '../utils/uuid';
 
 interface NodeComponentArgs {
-    title: string;
-    width?: number;
-    height?: number;
-    x?: number;
-    y?: number;
+  title: string;
+  width?: number;
+  height?: number;
+  x?: number;
+  y?: number;
 }
 
 export type NodeEvents = 'node:drag:start' | 'node:drag:dragging' | 'node:drag:end';
 
 export class NodeComponent<S = any> {
-    key = generateUUID();
-    referenceNode: CommonSelection<HTMLDivElement>;
-    referenceOutputsNode: CommonSelection<HTMLDivElement>;
-    referenceInputsNode: CommonSelection<HTMLDivElement>;
-    outputs: Pin[] = [];
-    inputs: Pin[] = [];
-    eventManager: Events<GlobalEvents> | undefined;
-    readonly nodeEventManager: Events<string> = new Events();
-    referenceRenderer: d3.Selection<HTMLDivElement, unknown, HTMLElement, any> | undefined;
-    private state: S = {} as S;
+  key = generateUUID();
+  referenceNode: CommonSelection<HTMLDivElement>;
+  referenceOutputsNode: CommonSelection<HTMLDivElement>;
+  referenceInputsNode: CommonSelection<HTMLDivElement>;
+  outputs: Pin[] = [];
+  inputs: Pin[] = [];
+  eventManager: Events<GlobalEvents> | undefined;
+  readonly nodeEventManager: Events<string> = new Events();
+  referenceRenderer: d3.Selection<HTMLDivElement, unknown, HTMLElement, any> | undefined;
+  private state: S = {} as S;
 
-    constructor(private readonly configNode: NodeComponentArgs) {
-      console.log(configNode);
-    }
+  constructor(private readonly configNode: NodeComponentArgs) {
+    console.log(configNode);
 
-    assoc(root: string) {
-      const width = (this.configNode && this.configNode.width) || 180;
+    const width = (this.configNode && this.configNode.width) || 180;
 
-      this.referenceNode = d3
-        .select(root)
-        .append('div')
-        .style('width', width + 'px')
-        .attr('draggable', true)
-        .attr('class', 'node-component');
+    const referenceNode = d3.create('div');
+    referenceNode
+      .style('width', width + 'px')
+      .attr('draggable', true)
+      .attr('class', 'node-component');
 
-      const contentCard = this.referenceNode
-        .append('div')
-        .style('position', 'relative');
+    this.referenceNode = referenceNode;
+  }
 
-      const header = contentCard
-        .insert('div')
-        .attr('class', 'node-header');
+  assoc(root: string) {
+    const node = d3.select(root).append(() =>
+      this.referenceNode!.node()
+    );
 
-      header
-        .append('div')
-        .text(this.configNode.title)
-        .attr('class', 'node-title');
+    const contentCard = node
+      .append('div')
+      .style('position', 'relative');
 
-      const contentNode = contentCard
-        .append('div')
-        .attr('class', 'node-content');
+    const header = contentCard
+      .insert('div')
+      .attr('class', 'node-header');
 
-      this.referenceInputsNode = contentNode
-        .append('div')
-        .attr('class', 'node-inputs');
+    header
+      .append('div')
+      .text(this.configNode.title)
+      .attr('class', 'node-title');
 
-      this.referenceRenderer = contentNode
-        .append('div')
-        .attr('class', 'node-content-renderer');
+    const contentNode = contentCard
+      .append('div')
+      .attr('class', 'node-content');
 
-      this.referenceOutputsNode = contentNode
-        .append('div')
-        .attr('class', 'node-outputs');
+    this.referenceInputsNode = contentNode
+      .append('div')
+      .attr('class', 'node-inputs');
 
-      this.installDrag();
-    }
+    this.referenceRenderer = contentNode
+      .append('div')
+      .attr('class', 'node-content-renderer');
 
-    setState(newState: S) {
-      this.state = { ...newState };
-    }
+    this.referenceOutputsNode = contentNode
+      .append('div')
+      .attr('class', 'node-outputs');
 
-    getState() {
-      return this.state;
-    }
+    this.installDrag();
+  }
 
-    installDrag() {
-      const self = this;
-      let deltaX: number, deltaY: number;
+  setState(newState: S) {
+    this.state = { ...newState };
+  }
 
-      const dragEvent = d3
-        .drag()
-        .on('start', function (event: any) {
-          const current = d3.select(this);
-          deltaX = Math.abs(Number(current.attr('data-x') || '0') - event.x);
-          deltaY = Math.abs(Number(current.attr('data-y') || '0') - event.y);
+  getState() {
+    return this.state;
+  }
 
-          current.classed('node-component--drag-start', true);
+  protected installDrag() {
+    const self = this;
+    let deltaX: number, deltaY: number;
 
-          self.eventManager?.emit('node:drag:start', {
-            x: deltaX,
-            y: deltaY,
-            node: self,
-            target: this
-          });
-        })
-        .on('drag', function (event: any) {
-          const x = event.x - deltaX;
-          const y = event.y - deltaY;
+    const dragEvent = d3
+      .drag()
+      .on('start', function (event: any) {
+        const current = d3.select(this);
+        deltaX = Math.abs(Number(current.attr('data-x') || '0') - event.x);
+        deltaY = Math.abs(Number(current.attr('data-y') || '0') - event.y);
 
-          const current = d3.select(this);
+        current.classed('node-component--drag-start', true);
 
-          current.classed('node-component--drag-start', false);
-          current.classed('node-component--drag-dragging', true);
-
-          current
-            .style('transform', `translate(${x}px, ${y}px)`)
-            .attr('data-x', x)
-            .attr('data-y', y);
-
-          self.eventManager?.emit('node:drag:dragging', {
-            x,
-            y,
-            node: self,
-            target: this
-          });
-        })
-        .on('end', function (event: any) {
-          const current = d3.select(this);
-
-          current.classed('node-component--drag-dragging', false);
-
-          self.eventManager?.emit('node:drag:end', {
-            node: self,
-            target: this
-          });
+        self.eventManager?.emit('node:drag:start', {
+          x: deltaX,
+          y: deltaY,
+          node: self,
+          target: this
         });
+      })
+      .on('drag', function (event: any) {
+        const x = event.x - deltaX;
+        const y = event.y - deltaY;
 
-      dragEvent(this.referenceNode as any);
+        const current = d3.select(this);
+
+        current.classed('node-component--drag-start', false);
+        current.classed('node-component--drag-dragging', true);
+
+        current
+          .style('transform', `translate(${x}px, ${y}px)`)
+          .attr('data-x', x)
+          .attr('data-y', y);
+
+        self.eventManager?.emit('node:drag:dragging', {
+          x,
+          y,
+          node: self,
+          target: this
+        });
+      })
+      .on('end', function (event: any) {
+        const current = d3.select(this);
+
+        current.classed('node-component--drag-dragging', false);
+
+        self.eventManager?.emit('node:drag:end', {
+          node: self,
+          target: this
+        });
+      });
+
+    dragEvent(this.referenceNode as any);
+  }
+
+  addInput(pin: Pin) {
+    this.inputs.push(pin);
+    pin.assoc(this.referenceInputsNode);
+    pin.nodeParent = this;
+    pin.eventManager = this.eventManager;
+    this.referenceInputsNode!.append(() =>
+      pin.getNode()
+    );
+  }
+
+  addOutput(pin: Pin) {
+    this.outputs.push(pin);
+    pin.assoc(this.referenceOutputsNode);
+    pin.nodeParent = this;
+    pin.eventManager = this.eventManager;
+    this.referenceOutputsNode!.append(() =>
+      pin.getNode()
+    );
+  }
+
+  render(renderer: (el: HTMLDivElement, node?: NodeComponent) => any) {
+    if (typeof renderer === 'function') {
+      const el = this.referenceRenderer!.node() as HTMLDivElement;
+      renderer(el, this);
+    } else {
+      console.warn('Render not contains a function arg');
     }
+  }
 
-    addInput(pin: Pin) {
-      this.inputs.push(pin);
-      pin.assoc(this.referenceInputsNode);
-      pin.node = this;
-      pin.eventManager = this.eventManager;
-        this.referenceInputsNode!.append(() =>
-          pin.getNode()
-        );
-    }
-
-    addOutput(pin: Pin) {
-      this.outputs.push(pin);
-      pin.assoc(this.referenceOutputsNode);
-      pin.node = this;
-      pin.eventManager = this.eventManager;
-        this.referenceOutputsNode!.append(() =>
-          pin.getNode()
-        );
-    }
-
-    render(renderer: (el: HTMLDivElement, node?: NodeComponent) => any) {
-      if (typeof renderer === 'function') {
-        const el = this.referenceRenderer!.node() as HTMLDivElement;
-        renderer(el, this);
-      } else {
-        console.warn('Render not contains a function arg');
+  broadcast(eventName: string, data: any) {
+    for (const output of this.outputs) {
+      for (const connection of output.connectedTo) {
+        connection.pin.nodeParent?.nodeEventManager?.emit(eventName, data);
       }
     }
+  }
 
-    broadcast(eventName: string, data: any) {
-      for (const output of this.outputs) {
-        for (const connection of output.connectedTo) {
-          connection.pin.node?.nodeEventManager?.emit(eventName, data);
-        }
-      }
-    }
+  on = this.nodeEventManager.on.bind(this.nodeEventManager);
 
-    on = this.nodeEventManager.on.bind(this.nodeEventManager);
+  destroy() {
+    this.referenceNode?.remove();
+  }
 
-    destroy() {
-      this.referenceNode?.remove();
-    }
+  // Events
 
-    // Events
+  onDestroy() { }
 
-    onDestroy() {}
+  toJSON() {
+    return {
+      key: this.key,
+      state: this.state,
+      outputs: this.outputs.map(o => o.toJSON()),
+      inputs: this.inputs.map(o => o.toJSON())
+    };
+  }
 }

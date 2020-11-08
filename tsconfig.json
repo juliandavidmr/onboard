@@ -14,10 +14,14 @@
     "strict": true,
     "useDefineForClassFields": true,
     "allowSyntheticDefaultImports": true,
+    "downlevelIteration": true,
     /* List of folders to include type definitions from */
     "typeRoots": [
       "node_modules/@types"
     ],
+    "declaration": true,
+    "outDir": "lib",
+    "checkJs": true
   },
   "include": [
     "src/**/*"

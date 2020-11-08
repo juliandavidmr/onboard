@@ -5,7 +5,7 @@ interface Observer<E> {
 }
 
 export class Events<E = string> {
-    private observers: Observer<E>[] = [];
+    private observers: Map<E, Observer<E>[]> = new Map();
 
     /**
      *
@@ -13,10 +13,11 @@ export class Events<E = string> {
      * @param callback
      */
     emit<D = any>(eventName: E, data?: D, cb?: Function): boolean {
-      const toEmit = this.observers.filter(o => o.eventName === eventName);
-      if (toEmit.length) {
+      const toEmit = this.observers.get(eventName);
+
+      if (toEmit && toEmit.length) {
         let success = true;
-        toEmit.forEach(observer => {
+        for (const observer of toEmit) {
           try {
             const r = observer.callback.call(null, data);
             if (typeof cb === 'function') {
@@ -25,7 +26,7 @@ export class Events<E = string> {
           } catch (error) {
             success = false;
           }
-        });
+        }
 
         return success;
       }
@@ -33,16 +34,18 @@ export class Events<E = string> {
     }
 
     on(eventName: E, callback: Function, ref?: string) {
-      this.observers.push({ eventName, callback, ref });
+      if (this.observers.has(eventName)) {
+        this.observers.get(eventName)!.push({ eventName, callback, ref });
+      } else {
+        this.observers.set(eventName, [{ eventName, callback, ref }]);
+      }
     }
 
     remove(eventName: E) {
-      this.observers = this.observers.filter(o => o.eventName === eventName);
-      return this.observers.length;
+      return this.observers.delete(eventName);
     }
 
     removeByRef(ref: string) {
-      this.observers = this.observers.filter(o => o.ref === ref);
-      return this.observers.length;
+      // todo
     }
 }

@@ -51,7 +51,7 @@ export function install(args: ExtensionParams) {
   /// Drag
 
   eventManager.on('node:drag:start', (event: any) => {
-    console.log('node drag', event);
+    // console.log('node drag', event);
   });
 
   eventManager.on('node:drag:dragging', (event: any) => {

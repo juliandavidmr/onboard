@@ -1,9 +1,9 @@
 import './editor.scss';
 import { NodeComponent, NodeEvents } from '../node/node';
 import { Events } from '../events/events';
-import { PinEvents } from '../pin/pin';
 import { ExtensionParams } from '../extensions/base';
 import * as d3 from 'd3';
+import { PinEvents } from '../pin/pin.model';
 
 export interface SchemaArgs {
     name: string;
@@ -33,12 +33,19 @@ export class Editor {
         .classed('editor', true)
         .exit();
 
-      config.nodes.map((node) => this.addNode(node));
+      config.nodes.map((node) => this.assocNode(node));
+    }
+
+    assocNode(node: NodeComponent) {
+      node.assoc('#' + this.id);
+      node.eventManager = this.eventManager;
     }
 
     addNode(node: NodeComponent) {
-      node.assoc('#' + this.id);
-      node.eventManager = this.eventManager;
+      if (this.config.nodes.find(n => n.key === node.key)) {
+        console.error('This node already exists');
+      }
+      // todo
     }
 
     on = this.eventManager.on.bind(this.eventManager);
@@ -55,5 +62,11 @@ export class Editor {
       } else {
         console.error('Cannot install extension.', extension);
       }
+    }
+
+    toJSON() {
+      return {
+        nodes: this.config.nodes.map(n => n.toJSON())
+      };
     }
 }
