@@ -5,7 +5,7 @@ import { GlobalEvents } from '../editor/editor';
 import { NodeComponent } from '../node/node';
 import { generateUUID } from '../utils/uuid';
 import { CommonSelection } from '..';
-import { PinArgs, PinJSON } from './pin.model';
+import { ConnectedTo, PinArgs, PinJSON } from './pin.model';
 
 const symbolKey = Symbol('ob-pin');
 declare const SymbolKeyType: typeof symbolKey;
@@ -14,7 +14,7 @@ export class Pin {
   referencePin: CommonSelection<HTMLDivElement>;
   eventManager?: Events<GlobalEvents>;
   nodeParent: NodeComponent | undefined;
-  connectedTo: { pin: Pin, extra: any }[] = []
+  connectedTo: ConnectedTo[] = []
   private readonly __props__: { [SymbolKeyType]: string };
 
   constructor(
@@ -23,7 +23,7 @@ export class Pin {
     private config: PinArgs = {}
   ) {
     this.__props__ = {
-      [symbolKey]: generateUUID()
+      [symbolKey]: config.key || generateUUID()
     };
 
     this.referencePin = d3.create('div');
@@ -78,6 +78,20 @@ export class Pin {
       .on('end', end);
 
     dragEvent(el as any);
+
+    this.referencePin?.on('click', (ev) => {
+      this.eventManager?.emit('pin:click', {
+        pin: this,
+        event: ev
+      });
+    });
+
+    this.referencePin?.on('mouseup', (ev) => {
+      this.eventManager?.emit('pin:click:up', {
+        pin: this,
+        event: ev
+      });
+    });
   }
 
   getNode() {
@@ -93,6 +107,7 @@ export class Pin {
 
   remove() {
     this.referencePin!.remove();
+    // todo remove connections
   }
 
   fromJSON(pinArgs: PinJSON): Pin {
