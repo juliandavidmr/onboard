@@ -1,3 +1,4 @@
+import { Connection } from './pin.connection';
 import { Pin } from "./pin";
 
 export interface PinArgs {
@@ -19,4 +20,12 @@ export interface PinJSON {
 export interface ConnectedTo {
     pin: Pin
     extra: any
+    connection?: Connection
+}
+
+export interface ConnectionCoords {
+    x1: number
+    y1: number
+    x2: number
+    y2: number
 }

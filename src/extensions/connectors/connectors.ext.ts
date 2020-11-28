@@ -7,7 +7,9 @@ import d3 from 'd3';
 export function install(args: ExtensionParams) {
   const { eventManager, d3, root } = args;
 
-  const containerLines = d3.select(root).append('svg')
+  const containerLines = d3
+    .select(root)
+    .append('svg')
     .style('width', '100%')
     .style('height', '100%');
 
@@ -27,12 +29,12 @@ export function install(args: ExtensionParams) {
       .attr('stroke-width', '4px')
       .attr('d', path);
 
-    pinSource = event.target.__data__.pin;
+    pinSource = event.pin;
   });
 
   eventManager.on('pin:drag:dragging', (event: any) => {
-    const x = (event.x);
-    const y = (event.y);
+    const x: number = event.x;
+    const y: number = event.y;
     const path = defaultPath([originalX, originalY, x, y], 0.5);
     svgLine.attr('d', path);
   });
@@ -58,7 +60,7 @@ export function install(args: ExtensionParams) {
     const node: NodeComponent = event.node;
 
     node.outputs.forEach(o => {
-      const [x, y] = getCentedRectangle(o.referencePin!.node()!);
+      const [x, y] = getCenterRectangle(o.referencePin!.node()!);
 
       o.connectedTo.forEach(conn => {
         const pathD: string = (conn.extra as CommonSelection<SVGLineElement>)!.node()!.getAttribute('d') as string;
@@ -66,13 +68,12 @@ export function install(args: ExtensionParams) {
         points[0] = x;
         points[1] = y;
 
-        (conn!.extra as CommonSelection<SVGLineElement>)!
-          .attr('d', defaultPath(points, 0.5));
+        (conn!.extra as CommonSelection<SVGLineElement>)!.attr('d', defaultPath(points, 0.5));
       });
     });
 
     node.inputs.forEach(o => {
-      const [x, y] = getCentedRectangle(o.referencePin!.node()!);
+      const [x, y] = getCenterRectangle(o.referencePin!.node()!);
 
       o.connectedTo.forEach(conn => {
         const pathD: string = (conn.extra as CommonSelection<SVGLineElement>)!.node()!.getAttribute('d') as string;
@@ -86,7 +87,7 @@ export function install(args: ExtensionParams) {
     });
   });
 
-  function getCentedRectangle(el: HTMLElement) {
+  function getCenterRectangle(el: HTMLElement) {
     const rect = el.getBoundingClientRect();
 
     const centerX = rect.x + (rect.width / 2);
